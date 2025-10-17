@@ -36,6 +36,17 @@ The following permissions are requested but not yet actively used. These will en
 - **Checks** (Read): For reading check run results
 - **Workflows** (Read & Write): For triggering and managing GitHub Actions workflows
 
+## GitLab CE App Scopes
+
+For self-hosted GitLab environments, the Claude GitLab CE App relies on GitLab's OAuth scopes rather than GitHub repository permissions. When registering the application, grant only the scopes needed for Claude's automation tasks:
+
+- **`read_api`**: Allows Claude to read merge requests, issues, and metadata
+- **`read_repository`**: Enables repository cloning and diff inspection
+- **`write_repository`**: Allows Claude to push branches and commits for suggested fixes
+- **`api`**: Required for write operations against issues and merge requests (GitLab groups several write capabilities under this scope)
+
+> ✅ Tip: Avoid enabling the `sudo` or `admin_mode` scopes. Claude never needs elevated administrative privileges on GitLab.
+
 ## Commit Signing
 
 All commits made by Claude through this action are automatically signed with commit signatures. This ensures the authenticity and integrity of commits, providing a verifiable trail of changes made by the action.
