@@ -1,0 +1,34 @@
+stages:
+  - claude
+
+variables:
+  BUN_INSTALL: "$CI_PROJECT_DIR/.bun"
+  CLAUDE_VERSION: "2.0.20"
+  RUNNER_TEMP: "$CI_PROJECT_DIR/tmp"
+  GITLAB_OUTPUT_FILE: "$CI_PROJECT_DIR/claude-outputs.env"
+
+claude-code:
+  stage: claude
+  image: node:20-bullseye
+  before_script:
+    - mkdir -p "$RUNNER_TEMP"
+    - export PATH="$BUN_INSTALL/bin:$HOME/.local/bin:$PATH"
+    - BUN_INSTALL="$BUN_INSTALL" curl -fsSL https://bun.sh/install | bash
+    - bun install
+    - curl -fsSL https://claude.ai/install.sh | bash -s "$CLAUDE_VERSION"
+    - touch "$GITLAB_OUTPUT_FILE"
+  script:
+    - export PATH="$BUN_INSTALL/bin:$HOME/.local/bin:$PATH"
+    - export GITHUB_OUTPUT="$RUNNER_TEMP/github-output.txt"
+    - export GITHUB_ENV="$RUNNER_TEMP/github-env.txt"
+    - bun run src/gitlab/run.ts
+  artifacts:
+    when: always
+    reports:
+      dotenv: claude-outputs.env
+    paths:
+      - tmp/
+      - claude-outputs.env
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success

@@ -31,6 +31,18 @@ This command will guide you through setting up the GitHub app and required secre
 - You must be a repository admin to install the GitHub app and add secrets
 - This quickstart method is only available for direct Anthropic API users. For AWS Bedrock or Google Vertex AI setup, see [docs/cloud-providers.md](./docs/cloud-providers.md).
 
+### GitLab CI support
+
+If you host your projects on GitLab, this repository now includes a ready-to-use [`gitlab-ci.yml`](./.gitlab-ci.yml) workflow. The job mirrors the GitHub Action behaviour: it looks for the trigger phrase (`@claude` by default) in merge request comments, builds a review prompt, runs the Claude CLI, and posts the response back to the merge request.
+
+To enable it:
+
+1. Copy `.gitlab-ci.yml` into your project.
+2. Configure a `GITLAB_TOKEN` CI/CD variable with API access to read and comment on merge requests.
+3. (Optional) Adjust environment variables like `CLAUDE_GITLAB_TRIGGER_PHRASE`, `CLAUDE_GITLAB_CLAUDE_ARGS`, or `CLAUDE_GITLAB_MAX_DIFF_LINES` to tune the behaviour.
+
+The job uses Bun to execute the TypeScript workflow located in [`src/gitlab/run.ts`](./src/gitlab/run.ts) and installs the Claude CLI automatically.
+
 ## 📚 Solutions & Use Cases
 
 Looking for specific automation patterns? Check our **[Solutions Guide](./docs/solutions.md)** for complete working examples including:
